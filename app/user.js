@@ -20,14 +20,44 @@ module.exports = function(app, db) {
 		}
 
 		const data = { username: req.body.username, password: password_hash};
-		
-		db.collection('users').findOne(data, function(err, user) {
-			if (err) {
-				res.send({ 'error': 'An error has occured' });
-			} else {
-				res.send(user);
-			}
-		});
+		if (data.username && data.password) {
+			db.collection('users').findOne(data, function(err, user) {
+				if (err) {
+					res.send({
+						"status": "failed",
+						"code": 400,
+						"message": "error ocurred"
+					});
+				} else {
+					if (user) {
+						res.send({
+							"status": "success",
+							"code": 200,
+							"message": "login successful",
+							"result": {
+								"user": {
+									"_id" : user._id,
+									"username": user.username
+								}
+							}
+							
+						});
+					} else {
+						res.send({
+							"status": "failed",
+							"message": "authentication failed",
+							"code": 204,
+						});
+					}
+				}
+			});
+		} else {
+			res.send({
+				"status": "failed",
+				"message": "username and password required",
+				"code": 204,
+			});
+		}
 	});
 
 	// Note: Register Users Data : username and password required
@@ -70,6 +100,8 @@ module.exports = function(app, db) {
 			}
 
 			res.send(error);
+
+			// Add checker
 		}
 	});
 };
