@@ -1,8 +1,34 @@
 const ObjectID = require('mongodb').ObjectID;
+const path = require('path');
+
 const crypto = require('crypto');
 const password_salt = "<>*&^%!@#$";
 
 module.exports = function(app, db) {
+
+	// Note: Index page.
+	app.get('/', function(req, res) {
+		res.sendFile('index.html', {root : path.join(__dirname, './views')});
+	});
+
+	// Note: User Login
+	app.post('/user/login', function(req, res) {
+
+		var password_hash = req.body.password;
+		if (password_hash) {
+			password_hash = crypto.createHmac('sha256', password_hash).update(password_salt).digest('hex');
+		}
+
+		const data = { username: req.body.username, password: password_hash};
+		
+		db.collection('users').findOne(data, function(err, user) {
+			if (err) {
+				res.send({ 'error': 'An error has occured' });
+			} else {
+				res.send(user);
+			}
+		});
+	});
 
 	// Note: Register Users Data : username and password required
 	app.post('/users', function(req, res) {
@@ -46,7 +72,4 @@ module.exports = function(app, db) {
 			res.send(error);
 		}
 	});
-
-	
-
 };
