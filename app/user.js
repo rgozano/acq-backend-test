@@ -25,14 +25,12 @@ module.exports = function(app, db) {
 				if (err) {
 					res.send({
 						"status": "failed",
-						"code": 400,
 						"message": "error ocurred"
 					});
 				} else {
 					if (user) {
 						res.send({
 							"status": "success",
-							"code": 200,
 							"message": "login successful",
 							"result": {
 								"user": {
@@ -40,13 +38,11 @@ module.exports = function(app, db) {
 									"username": user.username
 								}
 							}
-							
 						});
 					} else {
 						res.send({
 							"status": "failed",
 							"message": "authentication failed",
-							"code": 204,
 						});
 					}
 				}
@@ -55,7 +51,6 @@ module.exports = function(app, db) {
 			res.send({
 				"status": "failed",
 				"message": "username and password required",
-				"code": 204,
 			});
 		}
 	});
@@ -77,31 +72,41 @@ module.exports = function(app, db) {
 		if (data.username && data.password && tokens.indexOf(token) >= 0) {
 			db.collection('users').insert(data, function(err, result) {
 				if (err) {
-					res.send({ 'error': 'An error has occured' });
+					res.send({
+						"status": "failed",
+						"message": "error ocurred"
+					});
 				} else {
-					res.send(result.ops[0]);
+					res.send({
+						"status": "success",
+						"message": "register successful",
+						"result": {
+							"user": result.ops[0]
+						}
+					});
 				}
 			});
 		} else {
 			// Note: Error detection.
-			var error = {};
+			var message = {};
 			if (!data.username) {
-				error.username = "Username is required.";
+				message.username = "username is required";
 			}
 
 			if (!data.password) {
-				error.password = "Password is required.";
+				message.password = "password is required";
+			}
+			
+			if (!req.body.token) {
+				message.token = "token is required";
+			} else if (tokens.indexOf(token) == -1) {
+				message.token = "token not authenticated"
 			}
 
-			if (tokens.indexOf(token) == -1) {
-				error.token = "Token can't be used as authentication.";
-			} else {
-				error.token = "Authentication token required.";
-			}
-
-			res.send(error);
-
-			// Add checker
+			res.send({
+				"status": "failed",
+				"message": message
+			});
 		}
 	});
 };
