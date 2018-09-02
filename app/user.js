@@ -31,7 +31,7 @@ module.exports = function(app, db) {
 	});
 
 	// Note: Register Users Data : username and password required
-	app.post('/users', function(req, res) {
+	app.post('/user/register', function(req, res) {
 		// Note: Set static tokens for authentication
 		var tokens = ['', 'apitoken2018', 'apiapptoken2018'];
 		var token = req.body.token;
