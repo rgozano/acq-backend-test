@@ -1,1 +1,12 @@
 # Acq Backend Test
+- [Register User](https://acq-testing.herokuapp.com/user/register) 
+	- Method : Post request
+	- uses x-www-form-urlencoded as body
+	- username, password and token required as fields
+	- use **apitoken2018** as token
+	- link: https://acq-testing.herokuapp.com/user/register
+- [Login User](https://acq-testing.herokuapp.com/user/login)
+    - Method : Post request
+	- uses x-www-form-urlencoded as body
+	- username  and password required as fields
+	- link: https://acq-testing.herokuapp.com/user/login
