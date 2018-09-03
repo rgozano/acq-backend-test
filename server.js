@@ -7,7 +7,7 @@ const database = require('./config/db');
 // Note: Initialized express;
 const app = express();
 
-const port = 3000;
+const port = (process.env.PORT || 3000);
 
 // Note: Middleware parser
 app.use(bodyParser.urlencoded({ extended: true }));
